@@ -12,6 +12,8 @@ using std::string;
 using std::cerr;
 using std::endl;
 
+#include <GLFW/glfw3.h>
+
 #include "helper/glutils.h"
 #include "helper/texture.h"
 
@@ -109,12 +111,18 @@ void SceneBasic_Uniform::render()
     prog.setUniform("Material.Ks", 0.9f, 0.45f, 0.45f);
     prog.setUniform("Material.Ka", 0.5f, 0.25f, 0.25f);
     prog.setUniform("Material.Shininess", 10.0f);
+    
+
+    float currentTime = glfwGetTime();
+    std::cout << "Time: " + std::to_string(currentTime) << std::endl;
+    prog.setUniform("CurrentTime", currentTime);
 
     view = mat4(1.0f);
-    view = glm::lookAt(vec3(-5.0f, 0.75f, 2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(vec3(0.0f, 4.0f, 4.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     model = mat4(1.0f);
-    model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+    //model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
 
 
 
