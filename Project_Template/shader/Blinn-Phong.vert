@@ -23,12 +23,17 @@ uniform mat4 MVP;
 uniform float CurrentTime;
 
 
-float wiggleAnimY(float x, float time) {
-    float A = 0.25f; // Amplitude of wave
-    float Lambda = 2.0f; // Wavelength
-    float V = 1.0f; // wave velocity
+// Local variables used for sin waves
+float A = 0.25f; // Amplitude of wave
+float Lambda = 2.0f; // Wavelength
+float V = 1.0f; // wave velocity
 
+float wiggleAnimY(float x, float time) {
     return A * sin((2*PI/Lambda) * (x - V*time));
+}
+
+float wiggleAnimYNormal(float x, float time) {
+    return (-A * 2*PI/Lambda * cos(2*PI/Lambda * (x - V*time)),1.0f);
 }
 
 void main()
@@ -42,6 +47,10 @@ void main()
     
     vec4 offset = new vec4(0.0f,0.0f,0.0f,0.0f);
     offset[1] += wiggleAnimY(Position[0], CurrentTime);
+
+    float normalOffset = wiggleAnimYNormal(Position[0], CurrentTime);
+    Normal[2] += normalOffset;
+
     
     gl_Position = MVP * vec4(VertexPosition,1.0) + offset;
 
