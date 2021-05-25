@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include "scene.h"
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include "glutils.h"
 
 #define WIN_WIDTH 800
@@ -120,6 +120,7 @@ private:
         while( ! glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE) ) {
             GLUtils::checkForOpenGLError(__FILE__,__LINE__);
 			
+            scene.processInput(window);
             scene.update(float(glfwGetTime()));
             scene.render();
             glfwSwapBuffers(window);

@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <GLFW/glfw3.h>
+
 #include "helper/torus.h";
 #include "helper/teapot.h"
 #include "helper/plane.h";
@@ -32,6 +34,7 @@ public:
     SceneBasic_Uniform();
 
     void initScene();
+    void processInput(GLFWwindow * window);
     void update( float t );
     void render();
     void resize(int, int);

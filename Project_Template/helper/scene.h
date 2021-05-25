@@ -2,6 +2,11 @@
 
 #include <glm/glm.hpp>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
+
+
 class Scene
 {
 protected:
@@ -23,6 +28,12 @@ public:
       Load textures, initialize shaders, etc.
       */
     virtual void initScene() = 0;
+
+    /**
+      This is called prior to every frame.  Use this
+      to process inputs.
+      */
+    virtual void processInput(GLFWwindow * window) = 0;
 
     /**
       This is called prior to every frame.  Use this
