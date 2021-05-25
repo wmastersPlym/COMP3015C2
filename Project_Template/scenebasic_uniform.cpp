@@ -93,7 +93,7 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update( float t )
 {
-    angle += 0.4f;
+    angle += 0.2f;
 	//update your angle here
     if (angle > 360.0f) {
         angle -= 360.0f;
@@ -122,7 +122,7 @@ void SceneBasic_Uniform::render()
 
     model = mat4(1.0f);
     model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-    //model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
 
 
 
