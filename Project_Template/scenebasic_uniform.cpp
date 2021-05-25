@@ -23,19 +23,32 @@ using glm::vec3;
 using glm::mat4;
 
 
-//SceneBasic_Uniform::SceneBasic_Uniform() : torus(0.7f, 0.3f, 30, 30) {}
-SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))) {}
+SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))) {
+    angle = 0.0f;
+    time = 0;
+    particleLifeTime = 0.0f;
+    nParticles = 8000;
+    emitterPos = vec3(0.0f);
+    emitterDir = vec3(-1.0f, 2.0f, 0.0f);
+}
 
 void SceneBasic_Uniform::initScene()
 {
     // Initial setup
 
     compile();
+    
+
+    // Enables alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
 
+
+    initBuffers();
+
+
     projection = mat4(1.0f);
-
-
 
     // Setting up lights
 

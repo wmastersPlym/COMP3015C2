@@ -15,15 +15,30 @@
 #include "helper/teapot.h"
 #include "helper/plane.h";
 
+
+
 class SceneBasic_Uniform : public Scene
 {
 private:
-    float angle;
-    //Plane plane;
+    
+    GLSLProgram prog, particleProg;
 
-    //Torus torus;
+    //Random rand;
+
+    GLuint initVel, startTime, particles, nParticles;
+
+    //Grid grid;
+
+    glm::vec3 emitterPos, emitterDir;
+
+    float time, particleLifeTime;
+
+
+    float angle;
     Teapot teapot;
-    GLSLProgram prog;
+
+    void initBuffers();
+    float randFloat();
 
     void compile();
     void setMatrices();

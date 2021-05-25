@@ -49,9 +49,11 @@ void main()
     vec4 offset = new vec4(0.0f,0.0f,0.0f,0.0f);
     offset[1] += wiggleAnimY(Position[0], CurrentTime);
 
-    vec2 normalOffset = wiggleAnimYNormal(Position[0], CurrentTime);
-    Normal[1] += normalOffset[0];
-    Normal[2] += normalOffset[1];
+    vec3 normalOffset = new vec3(0.0f);
+    normalOffset.xy = wiggleAnimYNormal(Position[0], CurrentTime);
+    
+    Normal[1] *= normalOffset[0];
+    Normal[2] *= normalOffset[1];
 
     
     gl_Position = MVP * vec4(VertexPosition,1.0) + offset;
