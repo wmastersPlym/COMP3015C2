@@ -14,16 +14,17 @@
 #include "helper/torus.h";
 #include "helper/teapot.h"
 #include "helper/plane.h";
-
+#include "helper/random.h";
+#include "helper/particleutils.h";
 
 
 class SceneBasic_Uniform : public Scene
 {
 private:
     
-    GLSLProgram prog, particleProg;
+    GLSLProgram prog, particleProg, flatProg;
 
-    //Random rand;
+    Random rand;
 
     GLuint initVel, startTime, particles, nParticles;
 
@@ -31,7 +32,7 @@ private:
 
     glm::vec3 emitterPos, emitterDir;
 
-    float time, particleLifeTime;
+    float time, TTL;
 
 
     float angle;
@@ -42,6 +43,7 @@ private:
 
     void compile();
     void setMatrices();
+    void setParticleMatrices();
 
     glm::mat4 rotationMatrix;
 

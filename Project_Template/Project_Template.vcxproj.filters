@@ -75,6 +75,8 @@
     <None Include="shader\Blinn-Phong.vert" />
     <None Include="shader\Particle.frag" />
     <None Include="shader\Particle.vert" />
+    <None Include="shader\flat.vert" />
+    <None Include="shader\flat.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\scene.h">

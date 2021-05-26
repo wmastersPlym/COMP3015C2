@@ -6,11 +6,11 @@ layout (location = 1) in float BirthTime; // Time at which the particle was crea
 out float Opacity; // Opacity of particle
 out vec2 TexCoord; // Texture coorinate
 
-uniform float Time;									// Current time
-uniform vec3 Gravity = vec3(0.0, -0.05, 0.0);	// Gravity vector
-uniform float TTL;									// Paricle Time to Live
-uniform float ParticleSize = 1.0;					// Paricle size
-uniform vec3 EmittPos;								// Where the particle is emitted from
+uniform float Time;					// Current time
+uniform vec3 Gravity;				// Gravity vector
+uniform float TTL;					// Paricle Time to Live
+uniform float ParticleSize = 1.0;	// Paricle size
+uniform vec3 EmittPos;				// Where the particle is emitted from
 
 uniform mat4 MV;
 uniform mat4 Proj;

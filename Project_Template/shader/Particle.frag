@@ -5,6 +5,7 @@ in vec2 TexCoord;
 
 uniform sampler2D ParticleTex;
 
+
 layout ( location = 0 ) out vec4 FragColor;
 
 void main() {
