@@ -4,6 +4,8 @@
 
 ![Gif](Media/Screenshot.PNG)
 
+This project was a continuation of my first coursework for this module adding more features and models to the enviroment.
+
 ## Versions
 
 - ##### Visual studio
@@ -18,6 +20,7 @@ Works using opengl to create a 3D model with custom shaders using the blinn-phon
 
 ### How the code fit together
 scenebasic_uniform.cpp is essentially the main file (other than the shader files) that puts together all the extra libaries and additional files.  It contains functions that sets up the main scene, renders the 3D model and sets all the value and buffers for the shaders.
+
 
  ### Link
 - [Youtube video](https://youtu.be/xn1_9s4RiK8)
