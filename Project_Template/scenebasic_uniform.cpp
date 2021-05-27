@@ -226,6 +226,8 @@ void SceneBasic_Uniform::render()
 
     //  Sets up water
     model = mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f));
 
     waterProg.use();
 
