@@ -45,10 +45,10 @@ void SceneBasic_Uniform::initScene()
     glEnable(GL_DEPTH_TEST);
 
     
-    // Setting particle effects shader
+    // Setting the particle effects shader
 
     // Setting up particle textures
-    //model = mat4(1.0f);
+
     glActiveTexture(GL_TEXTURE0);
     Texture::loadTexture("media/texture/smoke.png");
 
@@ -69,14 +69,12 @@ void SceneBasic_Uniform::initScene()
     particleProg.setUniform("EmitterBasis", ParticleUtils::makeArbitraryBasis(emitterDir));
 
 
-    // Setting up blinn phong shader
 
-    //projection = mat4(1.0f);
+    // Setting up blinn phong shader
     
     prog.use();
 
     // Setting up lights
-
     // Setting x and z position for each of the 3 lights
     float x, z;
     for (int i = 0; i < 3; i++) {
@@ -125,18 +123,11 @@ void SceneBasic_Uniform::initScene()
 
     // Setting up doughnut shader
 
-    
-
     doughnutProg.use();
-
-    glEnable(GL_DEPTH_TEST);
-
-    projection = mat4(1.0f);
 
     glActiveTexture(GL_TEXTURE4);
     GLuint noiseTex = NoiseTex::generate2DTex(6.0f);
 
-    
     glBindTexture(GL_TEXTURE_2D, noiseTex);
 
     
@@ -184,17 +175,10 @@ void SceneBasic_Uniform::processInput(GLFWwindow * window) {
 
 void SceneBasic_Uniform::update( float t )
 {
-    // Updating the angle used to rotate the teapot
-    angle += 0.2f;
-    if (angle > 360.0f) {
-        angle -= 360.0f;
-    }
-
-    // Passing the current time to the vertex shader for the wiggle animation
+    
+    // Setting the delta time and current time
     deltaT = t - time;
     time = t;
-    //prog.setUniform("CurrentTime", t);
-    //particleProg.setUniform("Time", t);
 }   
 
 void SceneBasic_Uniform::render()

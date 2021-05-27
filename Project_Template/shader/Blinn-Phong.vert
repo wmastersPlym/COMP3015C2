@@ -12,10 +12,6 @@ out vec4 Position;
 out vec3 Normal;
 out vec2 TexCoord;
 
-
-
-
-
 uniform mat4 ModelViewMatrix;
 uniform mat3 NormalMatrix;
 uniform mat4 MVP;
@@ -28,11 +24,11 @@ float A = 0.2f; // Amplitude of wave
 float Lambda = 2.0f; // Wavelength
 float V = 1.0f; // wave velocity
 
-float wiggleAnimY(float x, float time) {
+float wiggleAnimY(float x, float time) { // Offsets the y component of position
     return A * sin((2*PI/Lambda) * (x - V*time));
 }
 
-vec2 wiggleAnimYNormal(float x, float time) {
+vec2 wiggleAnimYNormal(float x, float time) { // Creates offset for noraml matrix
     vec2 offset = new vec2(-A * 2*PI/Lambda * cos(2*PI/Lambda * (x - V*time)),1.0f);
     return normalize(offset);
 }

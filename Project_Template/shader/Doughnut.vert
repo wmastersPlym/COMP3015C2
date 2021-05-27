@@ -19,7 +19,7 @@ float A = 0.2f; // Amplitude of wave
 float Lambda = 2.0f; // Wavelength
 float V = 1.0f; // wave velocity
 
-float wiggleAnimY(float x, float time) {
+float wiggleAnimY(float x, float time) { // Creates wiggle offset
     return A * sin((2*PI/Lambda) * (x - V*time));
 }
 
