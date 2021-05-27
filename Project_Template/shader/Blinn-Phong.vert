@@ -46,7 +46,7 @@ void main()
 
     
     
-    vec4 offset = new vec4(0.0f,0.0f,0.0f,0.0f);
+    vec4 offset = vec4(0.0f,0.0f,0.0f,0.0f);
     offset[1] += wiggleAnimY(Position[0], CurrentTime);
 
     vec3 normalOffset = new vec3(0.0f);

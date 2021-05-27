@@ -12,9 +12,12 @@ layout (binding = 4) uniform sampler2D NoiseTex;
 uniform vec4 ColourA = vec4(1.0,0.0,0.0,1.0);
 uniform vec4 ColourB = vec4(0.0,1.0,1.0,1.0);
 
+
+
 in vec2 TexCoord;
 
 layout ( location = 0) out vec4 FragColor;
+
 
 void main() {
 	vec4 noise = texture(NoiseTex, TexCoord);

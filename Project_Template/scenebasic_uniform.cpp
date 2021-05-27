@@ -229,6 +229,7 @@ void SceneBasic_Uniform::render()
     model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f));
 
     doughnutProg.use();
+    doughnutProg.setUniform("CurrentTime", time);
 
     setDoughnutMatrices();
     //teapot.render();
