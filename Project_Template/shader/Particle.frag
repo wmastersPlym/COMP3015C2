@@ -10,6 +10,8 @@ layout ( location = 0 ) out vec4 FragColor;
 
 void main() {
 	FragColor = texture(ParticleTex, TexCoord);
+	FragColor = vec4(mix(vec3(1,1,1), FragColor.xyz, Opacity), FragColor.a);
+
 	FragColor.a *= Opacity;
 
 }

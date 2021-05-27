@@ -24,7 +24,7 @@ using glm::mat4;
 
 
 SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))),
-                                            angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(4000), TTL(6.0f), emitterPos(2.9, 2.3, 0),
+                                            angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(2000), TTL(2.0f), emitterPos(2.9, 2.32, 0),
                                             emitterDir(2, 2, 0)                                                         //emitterPos(2.9, 2.3, 0)
 {
 }
@@ -49,7 +49,7 @@ void SceneBasic_Uniform::initScene()
     // Setting up particle textures
     model = mat4(1.0f);
     glActiveTexture(GL_TEXTURE0);
-    Texture::loadTexture("media/texture/bluewater.png");
+    Texture::loadTexture("media/texture/smoke.png");
 
     glActiveTexture(GL_TEXTURE1);
     ParticleUtils::createRandomTex1D(nParticles * 3);
@@ -63,6 +63,7 @@ void SceneBasic_Uniform::initScene()
     particleProg.setUniform("TTL", TTL);
     particleProg.setUniform("Acceleration", vec3(0.0f, 1.0f, 0.0f));
     particleProg.setUniform("ParticleSize", 0.05f);
+    particleProg.setUniform("ParticleSizeMax", 1.0f);
     particleProg.setUniform("Emitter", emitterPos);
     particleProg.setUniform("EmitterBasis", ParticleUtils::makeArbitraryBasis(emitterDir));
 
@@ -183,7 +184,7 @@ void SceneBasic_Uniform::render()
 
     // Sets camera
     view = mat4(1.0f);
-    view = glm::lookAt(vec3(camXPos, 4.0f, 6.0f), vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(vec3(camXPos, 4.0f, 6.0f), vec3(0.0f, 2.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     // Sets up Teapot
     model = mat4(1.0f);
