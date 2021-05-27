@@ -163,10 +163,10 @@
     <None Include="shader\basic_uniform.vert" />
     <None Include="shader\Blinn-Phong.frag" />
     <None Include="shader\Blinn-Phong.vert" />
-    <None Include="shader\flat.frag" />
-    <None Include="shader\flat.vert" />
     <None Include="shader\Particle.frag" />
     <None Include="shader\Particle.vert" />
+    <None Include="shader\ParticleBasic.frag" />
+    <None Include="shader\ParticleBasic.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\cube.h" />

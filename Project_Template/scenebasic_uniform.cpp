@@ -24,8 +24,9 @@ using glm::mat4;
 
 
 SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))),
-                                           time(0), TTL(5.5f), nParticles(8000), emitterPos(0,0,0), emitterDir(0,1,0) {
-    angle = 0;
+                                            angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(4000), TTL(6.0f), emitterPos(0, 0, 0),
+                                            emitterDir(0, 2, 0)
+{
 }
 
 void SceneBasic_Uniform::initScene()
@@ -34,6 +35,8 @@ void SceneBasic_Uniform::initScene()
 
     compile();
     
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+
 
     // Enables alpha blending
     glEnable(GL_BLEND);
@@ -41,27 +44,30 @@ void SceneBasic_Uniform::initScene()
     glEnable(GL_DEPTH_TEST);
 
     
-    // Setting particle effects
-    
+    // Setting particle effects shader
 
-    initBuffers();
-
-
+    // Setting up particle textures
+    model = mat4(1.0f);
     glActiveTexture(GL_TEXTURE0);
     Texture::loadTexture("media/texture/bluewater.png");
 
+    glActiveTexture(GL_TEXTURE1);
+    ParticleUtils::createRandomTex1D(nParticles * 3);
+    
+    initBuffers();
     
     particleProg.use();
+
+    particleProg.setUniform("randomTex", 1);
     particleProg.setUniform("ParticleTex", 0);
-    
-    particleProg.setUniform("Time", float(glfwGetTime()));
     particleProg.setUniform("TTL", TTL);
+    particleProg.setUniform("Acceleration", vec3(0.0f, 1.0f, 0.0f));
     particleProg.setUniform("ParticleSize", 0.05f);
-    particleProg.setUniform("Gravity", vec3(0.0f, 1.0f, 0.0f));
-    particleProg.setUniform("EmittPos", emitterPos);
+    particleProg.setUniform("Emitter", emitterPos);
+    particleProg.setUniform("EmitterBasis", ParticleUtils::makeArbitraryBasis(emitterDir));
 
-    
 
+    // Setting up blinn phong shader
 
     projection = mat4(1.0f);
 
@@ -104,13 +110,13 @@ void SceneBasic_Uniform::initScene()
     GLuint wood = Texture::loadTexture("media/texture/hardwood2_diffuse.jpg");
     GLuint moss = Texture::loadTexture("media/texture/moss.png");
 
-    // Load wood texture file into channel 1
-    glActiveTexture(GL_TEXTURE1);
+    // Load wood texture file into channel 2
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, wood);
 
     
-    // Load moss texture file into channel 2
-    glActiveTexture(GL_TEXTURE2);
+    // Load moss texture file into channel 3
+    glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, moss);
     
 }
@@ -118,14 +124,22 @@ void SceneBasic_Uniform::initScene()
 void SceneBasic_Uniform::compile()
 {
 	try {
+        // Compliles, links and sets up the transform feedback for particle shader
+        particleProg.compileShader("shader/Particle.vert");
+        particleProg.compileShader("shader/Particle.frag");
+
+        GLuint progHandle = particleProg.getHandle();
+        const char* outputNames[] = { "Position", "Velocity", "Age" };
+        glTransformFeedbackVaryings(progHandle, 3, outputNames, GL_SEPARATE_ATTRIBS);
+
+        particleProg.link();
+
+        // compiles and links blinn phong shader
 		prog.compileShader("shader/Blinn-Phong.vert");
 		prog.compileShader("shader/Blinn-Phong.frag");
 		prog.link();
 		
-
-        particleProg.compileShader("shader/Particle.vert");
-        particleProg.compileShader("shader/Particle.frag");
-        particleProg.link();
+        
 
 
 	} catch (GLSLProgramException &e) {
@@ -149,6 +163,7 @@ void SceneBasic_Uniform::update( float t )
     }
 
     // Passing the current time to the vertex shader for the wiggle animation
+    deltaT = t - time;
     time = t;
     //prog.setUniform("CurrentTime", t);
     //particleProg.setUniform("Time", t);
@@ -174,90 +189,143 @@ void SceneBasic_Uniform::render()
     prog.use();
     prog.setUniform("CurrentTime", time);
     setMatrices();
-    //teapot.render();
+    teapot.render();
 
-    model = mat4(1.0f);
+    
     // Sets up particles
+    model = mat4(1.0f);
 
     particleProg.use();
+    particleProg.setUniform("Time", time);
+    particleProg.setUniform("DeltaT", deltaT);
+
+    
+    // UpdatePass
+    particleProg.setUniform("Pass", 1);
+    
+    glEnable(GL_RASTERIZER_DISCARD);
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[drawBuff]);
+    glBeginTransformFeedback(GL_POINTS);
+    
+    glBindVertexArray(particleArray[1 - drawBuff]);
+    glVertexAttribDivisor(0, 0);
+    glVertexAttribDivisor(1, 0);
+    glVertexAttribDivisor(2, 0);
+    glDrawArrays(GL_POINTS, 0, nParticles);
+    glBindVertexArray(0);
+    
+    glEndTransformFeedback();
+    glDisable(GL_RASTERIZER_DISCARD);
+    
+
+    // RenderPass
+    
+    particleProg.setUniform("Pass", 2);
+
     setParticleMatrices();
 
     glDepthMask(GL_FALSE);
-    particleProg.use();
-    particleProg.setUniform("Time", float(glfwGetTime()));
-    glBindVertexArray(particles);
+    glBindVertexArray(particleArray[drawBuff]);
+    glVertexAttribDivisor(0, 1);
+    glVertexAttribDivisor(1, 1);
+    glVertexAttribDivisor(2, 1);
     glDrawArraysInstanced(GL_TRIANGLES, 0, 6, nParticles);
     glBindVertexArray(0);
     glDepthMask(GL_TRUE);
+
+    // swap buffers
+    drawBuff = 1 - drawBuff;
+
     
 }
 
 void SceneBasic_Uniform::initBuffers() {
     particleProg.use();
+    
     // Creates the initial buffers 
-    glGenBuffers(1, &initVel);
-    glGenBuffers(1, &startTime);
+    glGenBuffers(2, posBuf); // position buffer
+    glGenBuffers(2, velBuf); // velocity buffer
+    glGenBuffers(2, age);    // Age buffer
 
     // Allocates space for the buffers
-    int size = nParticles * sizeof(float);
-    glBindBuffer(GL_ARRAY_BUFFER, initVel);
-    glBufferData(GL_ARRAY_BUFFER, size * 3, 0, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, startTime);
-    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_STATIC_DRAW);
-
-    // Fills velocity buffer with random velocities 
-    glm::mat3 emitterBasis = ParticleUtils::makeArbitraryBasis(emitterDir);
-    vec3 v(0.0f);
-    float velocity, theta, phi;
-    std::vector<GLfloat> data(nParticles * 3);
-    for (uint32_t i = 0; i < nParticles; i++) {
-        // Pick the direction of the velocity
-        theta = glm::mix(0.0f, glm::pi<float>() / 20.0f, randFloat());
-        phi = glm::mix(0.0f, glm::two_pi<float>(), randFloat());
-
-        v.x = sinf(theta) * cosf(phi);
-        v.y = sinf(theta);
-        v.z = sinf(theta) * sinf(phi);
-
-        // Scale to set the magnitude of the velocity
-        velocity = glm::mix(0.5f, 1.5f, randFloat());
-        v = glm::normalize(emitterBasis * v) * velocity;
-
-        data[3 * i] = v.x;
-        data[3 * i + 1] = v.y;
-        data[3 * i + 2] = v.z;
-
-    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, initVel);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3, data.data());
+    int size = nParticles * 3 * sizeof(GLfloat);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, age[1]);
+    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
 
     // Fill the start time Buffer
-
+    std::vector<GLfloat> tmpData(nParticles);
     float rate = TTL / nParticles;
     for (int i = 0; i < nParticles; i++) {
-        data[i] = rate * i;
+        tmpData[i] = rate * (i - nParticles);
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, startTime);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), data.data());
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), tmpData.data());
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glGenVertexArrays(1, &particles);
-    glBindVertexArray(particles);
-    glBindBuffer(GL_ARRAY_BUFFER, initVel);
+    // create Vertex arrays for eaach set of buffers
+    glGenVertexArrays(2, particleArray);
+
+    // set up particle array 0
+    glBindVertexArray(particleArray[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, startTime);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
-    glVertexAttribDivisor(0, 1);
-    glVertexAttribDivisor(1, 1);
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
+
+    // set up particle array 1
+    glBindVertexArray(particleArray[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, age[1]);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
 
     glBindVertexArray(0);
+
+    // Setup the feedback objects
+    glGenTransformFeedbacks(2, feedback);
+
+    // TransformFeedback 0
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBuf[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, velBuf[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, age[0]);
+
+    // TransformFeedback 1
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBuf[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, velBuf[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, age[1]);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
     
 }
 

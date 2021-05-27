@@ -22,17 +22,26 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     
-    GLSLProgram prog, particleProg, flatProg;
+    GLSLProgram prog, particleProg;
 
     Random rand;
 
-    GLuint initVel, startTime, particles, nParticles;
-
-    //Grid grid;
-
+    // Emitter position and direction
     glm::vec3 emitterPos, emitterDir;
 
-    float time, TTL;
+    // Particle buffers
+    GLuint posBuf[2], velBuf[2], age[2];
+
+    // Particle VAO's
+    GLuint particleArray[2];
+
+    // Transform feedbacks
+    GLuint feedback[2];
+
+    GLuint drawBuff;
+
+    int nParticles;
+    float time, TTL, deltaT;
 
 
     float angle;
