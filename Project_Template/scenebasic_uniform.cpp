@@ -123,12 +123,11 @@ void SceneBasic_Uniform::initScene()
 
 
 
-    // Setting up water shader
-    //model = mat4(1.0f);
+    // Setting up doughnut shader
 
     
 
-    waterProg.use();
+    doughnutProg.use();
 
     glEnable(GL_DEPTH_TEST);
 
@@ -164,9 +163,9 @@ void SceneBasic_Uniform::compile()
 		prog.link();
 
         // Compiles and links water shader
-        waterProg.compileShader("shader/Water.vert");
-        waterProg.compileShader("shader/Water.frag");
-        waterProg.link();
+        doughnutProg.compileShader("shader/Doughnut.vert");
+        doughnutProg.compileShader("shader/Doughnut.frag");
+        doughnutProg.link();
 		
         
 
@@ -224,14 +223,14 @@ void SceneBasic_Uniform::render()
     teapot.render();
 
 
-    //  Sets up water
+    //  Sets up doughnut
     model = mat4(1.0f);
     model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
     model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f));
 
-    waterProg.use();
+    doughnutProg.use();
 
-    setWaterMatrices();
+    setDoughnutMatrices();
     //teapot.render();
     torus.render();
 
@@ -404,12 +403,12 @@ void SceneBasic_Uniform::setParticleMatrices() {
     particleProg.setUniform("Proj", projection);
 }
 
-void SceneBasic_Uniform::setWaterMatrices() {
+void SceneBasic_Uniform::setDoughnutMatrices() {
 
     mat4 mv = view * model;
-    waterProg.setUniform("MV", mv);
-    waterProg.setUniform("MVP", projection * mv);
-    waterProg.setUniform("Proj", projection);
+    doughnutProg.setUniform("MV", mv);
+    doughnutProg.setUniform("MVP", projection * mv);
+    doughnutProg.setUniform("Proj", projection);
 }
 
 float SceneBasic_Uniform::randFloat() {

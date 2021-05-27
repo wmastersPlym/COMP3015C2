@@ -86,8 +86,8 @@
     <None Include="shader\Particle.vert" />
     <None Include="shader\ParticleBasic.frag" />
     <None Include="shader\ParticleBasic.vert" />
-    <None Include="shader\Water.frag" />
-    <None Include="shader\Water.vert" />
+    <None Include="shader\Doughnut.frag" />
+    <None Include="shader\Doughnut.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\scene.h">

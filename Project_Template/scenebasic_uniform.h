@@ -22,7 +22,7 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     
-    GLSLProgram prog, particleProg, waterProg;
+    GLSLProgram prog, particleProg, doughnutProg;
 
     Random rand;
 
@@ -54,7 +54,7 @@ private:
     void compile();
     void setMatrices();
     void setParticleMatrices();
-    void setWaterMatrices();
+    void setDoughnutMatrices();
 
     glm::mat4 rotationMatrix;
 
