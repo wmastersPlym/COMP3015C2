@@ -24,8 +24,8 @@ using glm::mat4;
 
 
 SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))),
-                                            angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(4000), TTL(6.0f), emitterPos(0, 0, 0),
-                                            emitterDir(0, 2, 0)
+                                            angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(4000), TTL(6.0f), emitterPos(2.9, 2.3, 0),
+                                            emitterDir(2, 2, 0)                                                         //emitterPos(2.9, 2.3, 0)
 {
 }
 
@@ -175,16 +175,20 @@ void SceneBasic_Uniform::render()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
+    float A = 2.0f; // Amplitude of wave
+    float Lambda = 4.0f; // Wavelength
+    float V = 0.5f; // wave velocity
+
+    float camXPos = A * sin((2 * 3.1415926535897932384626433832795f / Lambda) * (V * time));
 
     // Sets camera
     view = mat4(1.0f);
-    view = glm::lookAt(vec3(0.0f, 4.0f, 4.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(vec3(camXPos, 4.0f, 6.0f), vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     // Sets up Teapot
     model = mat4(1.0f);
     model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
+    //model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
 
     prog.use();
     prog.setUniform("CurrentTime", time);
@@ -194,6 +198,7 @@ void SceneBasic_Uniform::render()
     
     // Sets up particles
     model = mat4(1.0f);
+
 
     particleProg.use();
     particleProg.setUniform("Time", time);
