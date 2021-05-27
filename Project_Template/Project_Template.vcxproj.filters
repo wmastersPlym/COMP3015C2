@@ -63,6 +63,15 @@
     <ClCompile Include="helper\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="helper\noisetex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\objmesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\basic_uniform.frag">
@@ -77,6 +86,8 @@
     <None Include="shader\Particle.vert" />
     <None Include="shader\ParticleBasic.frag" />
     <None Include="shader\ParticleBasic.vert" />
+    <None Include="shader\Water.frag" />
+    <None Include="shader\Water.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\scene.h">
@@ -122,6 +133,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="helper\plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\noisetex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\objmesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\particleutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\aabb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

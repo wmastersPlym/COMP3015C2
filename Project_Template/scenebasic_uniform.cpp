@@ -23,7 +23,8 @@ using glm::vec3;
 using glm::mat4;
 
 
-SceneBasic_Uniform::SceneBasic_Uniform() : teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))),
+SceneBasic_Uniform::SceneBasic_Uniform() :  teapot(13, glm::translate(mat4(1.0f), vec3(0.0f, 1.5f, 0.25f))),
+                                            torus(0.7f, 0.3f, 30, 30),
                                             angle(0.0f), drawBuff(1), time(0), deltaT(0), nParticles(2000), TTL(2.0f), emitterPos(2.9, 2.32, 0),
                                             emitterDir(2, 2, 0)                                                         //emitterPos(2.9, 2.3, 0)
 {
@@ -47,7 +48,7 @@ void SceneBasic_Uniform::initScene()
     // Setting particle effects shader
 
     // Setting up particle textures
-    model = mat4(1.0f);
+    //model = mat4(1.0f);
     glActiveTexture(GL_TEXTURE0);
     Texture::loadTexture("media/texture/smoke.png");
 
@@ -70,8 +71,8 @@ void SceneBasic_Uniform::initScene()
 
     // Setting up blinn phong shader
 
-    projection = mat4(1.0f);
-
+    //projection = mat4(1.0f);
+    
     prog.use();
 
     // Setting up lights
@@ -97,7 +98,7 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("lights[1].La", vec3(0.0f, 0.2f, 0.0f));
     prog.setUniform("lights[2].La", vec3(0.2f, 0.0f, 0.0f));
     
-
+    
 
     // Setting up Model 
 
@@ -119,6 +120,28 @@ void SceneBasic_Uniform::initScene()
     // Load moss texture file into channel 3
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, moss);
+
+
+
+    // Setting up water shader
+    //model = mat4(1.0f);
+
+    
+
+    waterProg.use();
+
+    glEnable(GL_DEPTH_TEST);
+
+    projection = mat4(1.0f);
+
+    glActiveTexture(GL_TEXTURE4);
+    GLuint noiseTex = NoiseTex::generate2DTex(6.0f);
+
+    
+    glBindTexture(GL_TEXTURE_2D, noiseTex);
+
+    
+    
     
 }
 
@@ -139,6 +162,11 @@ void SceneBasic_Uniform::compile()
 		prog.compileShader("shader/Blinn-Phong.vert");
 		prog.compileShader("shader/Blinn-Phong.frag");
 		prog.link();
+
+        // Compiles and links water shader
+        waterProg.compileShader("shader/Water.vert");
+        waterProg.compileShader("shader/Water.frag");
+        waterProg.link();
 		
         
 
@@ -172,29 +200,38 @@ void SceneBasic_Uniform::update( float t )
 
 void SceneBasic_Uniform::render()
 {
-    
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    // Varies the cameras x position to get a constantly changing view of the scene
     float A = 2.0f; // Amplitude of wave
     float Lambda = 4.0f; // Wavelength
     float V = 0.5f; // wave velocity
-
     float camXPos = A * sin((2 * 3.1415926535897932384626433832795f / Lambda) * (V * time));
 
     // Sets camera
     view = mat4(1.0f);
     view = glm::lookAt(vec3(camXPos, 4.0f, 6.0f), vec3(0.0f, 2.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    
+
     // Sets up Teapot
     model = mat4(1.0f);
     model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-    //model = glm::rotate(model, glm::radians(angle), vec3(0.0f, 0.0f, 1.0f));
 
     prog.use();
     prog.setUniform("CurrentTime", time);
     setMatrices();
     teapot.render();
+
+
+    //  Sets up water
+    model = mat4(1.0f);
+
+    waterProg.use();
+
+    setWaterMatrices();
+    //teapot.render();
+    torus.render();
 
     
     // Sets up particles
@@ -363,6 +400,14 @@ void SceneBasic_Uniform::setParticleMatrices() {
 
     particleProg.setUniform("MV", mv);
     particleProg.setUniform("Proj", projection);
+}
+
+void SceneBasic_Uniform::setWaterMatrices() {
+
+    mat4 mv = view * model;
+    waterProg.setUniform("MV", mv);
+    waterProg.setUniform("MVP", projection * mv);
+    waterProg.setUniform("Proj", projection);
 }
 
 float SceneBasic_Uniform::randFloat() {

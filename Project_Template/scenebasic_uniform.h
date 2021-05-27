@@ -16,13 +16,13 @@
 #include "helper/plane.h";
 #include "helper/random.h";
 #include "helper/particleutils.h";
-
+#include "helper/noisetex.h";
 
 class SceneBasic_Uniform : public Scene
 {
 private:
     
-    GLSLProgram prog, particleProg;
+    GLSLProgram prog, particleProg, waterProg;
 
     Random rand;
 
@@ -46,6 +46,7 @@ private:
 
     float angle;
     Teapot teapot;
+    Torus torus;
 
     void initBuffers();
     float randFloat();
@@ -53,6 +54,7 @@ private:
     void compile();
     void setMatrices();
     void setParticleMatrices();
+    void setWaterMatrices();
 
     glm::mat4 rotationMatrix;
 
